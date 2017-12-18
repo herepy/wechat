@@ -1,20 +1,15 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: py
+ * User: pengyu
  * Date: 2017/11/13
  * Time: 23:10
  */
-require_once "wechat.php";
-class WebAuth extends WeChat {
-//    protected $appId;
-//    protected $appSecret;
 
-    public function __construct($appId,$appSecret)
-    {
-        $this->appId=$appId;
-        $this->appSecret=$appSecret;
-    }
+//require_once "./wechat.php";
+require_once "./wechatPay.php";
+
+class WebAuth extends WeChat {
 
     //生成code获取的url
     public function codeUrl($redirect_uri,$scope="snsapi_base",$state="STATE"){
@@ -84,7 +79,3 @@ class WebAuth extends WeChat {
 
 
 }
-
-$a=new WebAuth("111","222");
-$x=$a->signature("qqqqqq","http://www.baidu.com?a=2");
-echo json_encode($x);

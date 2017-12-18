@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: py
+ * User: pengyu
  * Date: 2017/11/13
  * Time: 23:51
  */
@@ -14,6 +14,45 @@ class WeChat{
     {
         $this->appId=$appId;
         $this->appSecret=$appSecret;
+    }
+
+    //获取终端ip
+    protected function getIp(){
+        $ip=false;
+        if(!empty($_SERVER["HTTP_CLIENT_IP"])){
+            $ip = $_SERVER["HTTP_CLIENT_IP"];
+        }
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode (", ", $_SERVER['HTTP_X_FORWARDED_FOR']);
+            if ($ip) { array_unshift($ips, $ip); $ip = false; }
+            for ($i = 0; $i < count($ips); $i++) {
+                if (!preg_match ("^(10│172.16│192.168).", $ips[$i])) {
+                    $ip = $ips[$i];
+                    break;
+                }
+            }
+        }
+        return ($ip ? $ip : $_SERVER['REMOTE_ADDR']);
+    }
+
+    //数组转xml数据
+    protected function arrToXml($arr){
+        $str="";
+        foreach ($arr as $key => $val){
+            $str.="<{$key}>".$val."</{$key}>";
+        }
+        return "<xml>".$str."</xml>";
+    }
+
+    //xml转数组
+    protected function xmlToArr($xml){
+        if(!$xml){
+            return false;
+        }
+        //禁止引用外部xml实体
+        libxml_disable_entity_loader(true);
+        $data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+        return $data;
     }
 
     //数组生成url键值对形式(不转码)
@@ -45,15 +84,17 @@ class WeChat{
                  $url.="?".$query;
              }
          }
-        $ch=curl_init($url);
+         $ch=curl_init($url);
          if($is_post){
              curl_setopt($ch,CURLOPT_POST,true);
              curl_setopt($ch,CURLOPT_POSTFIELDS,$query);
          }
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-        $res=curl_exec($ch);
-        curl_close($ch);
-        return $res;
+         curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,true);
+         curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);
+         curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+         $res=curl_exec($ch);
+
+         return $res;
     }
 
     //获取调用接口的access_token  7200s
@@ -105,7 +146,7 @@ class WeChat{
         return $res->errcode==0?$res->ticket:false;
     }
 
-    //生产卡券签名
+    //生成卡券签名
     public function cardSign($api_access){
 
     }
