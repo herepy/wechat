@@ -189,8 +189,8 @@ class WechatPay extends WeChat{
         return $data;
     }
 
-    //获取结果通知 并 验证
-    public function checkSign(){
+    //获取支付结果通知 并 验证
+    public function getPayResult(){
         $result=file_get_contents("php://input");
         $data=$this->xmlToArr($result);
         if($data["return_code"]=="FAIL"){
@@ -208,7 +208,8 @@ class WechatPay extends WeChat{
     }
 
     //生成微信公众号网页支付config
-    public function payConfig($body,$out_trade_no,$total_fee,$notify_url,$trade_type,$openid=null){
+    public function webPayConfig($body,$out_trade_no,$total_fee,$notify_url,$openid){
+        $trade_type="JSAPI";
         //请求统一下单接口生成预支付标识  7200s
         $result=$this->unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type,$openid);
         if($result===false){
@@ -229,6 +230,34 @@ class WechatPay extends WeChat{
         //签名
         $sign=$this->paySign($arr);
         $arr["paySign"]=$sign;
+
+        return $arr;
+    }
+
+    //生成app支付config
+    public function appPayConfig($body,$out_trade_no,$total_fee,$notify_url){
+        $trade_type="APP";
+        //请求统一下单接口生成预支付标识  7200s
+        $result=$this->unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type);
+        if($result===false){
+            return false;
+        }
+        if($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL"){
+            return false;
+        }
+        $prepay_id=$result["prepay_id"];
+
+        $arr=array();
+        $arr["appid"]=$this->appId;
+        $arr["partnerid"]=$this->mchId;
+        $arr["prepayid"]=$prepay_id;
+        $arr["package"]="Sign=WXPay";
+        $arr["noncestr"]=$this->randStr(32);
+        $arr["timestamp"]=time();
+
+        //签名
+        $sign=$this->paySign($arr);
+        $arr["sign"]=$sign;
 
         return $arr;
     }
