@@ -59,6 +59,9 @@ class WeChat{
     protected function arrToUrl($arr){
         $str="";
         foreach ($arr as $k => $v){
+            if($k=="sign"){
+                continue;
+            }
             $str.=$k."=".$v."&";
         }
         return rtrim($str,"&");
@@ -76,7 +79,7 @@ class WeChat{
     }
 
     //curl 请求数据
-     function http_request($url,$query=null,$is_post=false){
+     function http_request($url,$query=null,$is_post=false,$certPath=null,$keyPath=null){
          if($query!==null && $is_post==false){
              if(is_array($query)){
                  $url.="?".http_build_query($query);
@@ -89,8 +92,18 @@ class WeChat{
              curl_setopt($ch,CURLOPT_POST,true);
              curl_setopt($ch,CURLOPT_POSTFIELDS,$query);
          }
-         curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,true);
-         curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);
+         if($certPath && $keyPath){   //需要验证证书
+             //默认格式为PEM
+             curl_setopt($ch,CURLOPT_SSLCERTTYPE,'PEM');
+             curl_setopt($ch,CURLOPT_SSLCERT,$certPath);
+
+             curl_setopt($ch,CURLOPT_SSLKEYTYPE,'PEM');
+             curl_setopt($ch,CURLOPT_SSLKEY,$keyPath);
+         }else{
+             curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,true);
+             curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);
+         }
+
          curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
          $res=curl_exec($ch);
 
