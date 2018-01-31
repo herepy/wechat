@@ -36,7 +36,7 @@ class WechatPay extends WeChat{
     }
 
     //统一下单
-    public function unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type,$openid=null){
+    public function unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type,$openid=null,$scene_info=null){
         $url="https://api.mch.weixin.qq.com/pay/unifiedorder";
         $parameter=array();
         $parameter["appid"]=$this->appId;
@@ -51,6 +51,9 @@ class WechatPay extends WeChat{
 
         if($openid!==null){
             $parameter["openid"]=$openid;
+        }
+        if($scene_info!==null){
+            $parameter["scene_info"]=$scene_info;
         }
         //签名
         $sign=$this->paySign($parameter);

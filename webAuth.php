@@ -6,7 +6,7 @@
  * Time: 23:10
  */
 
-//require_once "./wechat.php";
+require_once "./wechat.php";
 require_once "./wechatPay.php";
 
 class WebAuth extends WeChat {
