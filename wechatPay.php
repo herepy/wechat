@@ -71,7 +71,7 @@ class WechatPay extends WeChat{
         return $data;
     }
 
-    //订单查询
+    //订单查询.
     public function orderQuery($out_trade_no,$transaction_id=null){
         $url="https://api.mch.weixin.qq.com/pay/orderquery";
         $arr=array();
