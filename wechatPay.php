@@ -77,11 +77,13 @@ class WechatPay extends WeChat{
         $arr=array();
         $arr["appid"]=$this->appId;
         $arr["mch_id"]=$this->mchId;
+
         if($transaction_id!==null){  //有微信订单号优先使用
             $arr["transaction_id"]=$transaction_id;
         }else{   //使用商户订单号
             $arr["out_trade_no"]=$out_trade_no;
         }
+
         $arr["nonce_str"]=$this->randStr(32);
         $arr["sign_type"]="MD5";
 
