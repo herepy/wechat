@@ -96,7 +96,7 @@ class WechatPay extends WeChat{
             return false;
         }
         $data=$this->xmlToArr($result);
-        if($data["return_code"]=="FAIL" || $data["FAIL"]){
+        if($data["return_code"]=="FAIL" || $data["result_code"] == "FAIL"){
             return false;
         }
 
