@@ -2,7 +2,6 @@
     "name": "pengyu/wechat",
     "description": "wechat api",
     "type": "library",
-    "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
         {
