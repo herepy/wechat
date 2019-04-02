@@ -8,7 +8,8 @@
 
 namespace Pywechat;
 
-class Pay extends WeChat{
+class Pay extends WeChat
+{
     //商户号
     protected $mchId;
     //商户密钥
@@ -23,65 +24,76 @@ class Pay extends WeChat{
     }
 
     //生成支付签名
-    protected function paySign($parameter,$sign_type="MD5"){
+    protected function paySign($parameter,$signType="MD5")
+    {
         //字典排序
         ksort($parameter);
+
         //拼接键值对
         $str=$this->arrToUrl($parameter);
+
         $type="md5";
-        if($sign_type!="MD5"){
+        if($signType!="MD5"){
             $type="sha256";
         }
+
         return strtoupper(hash($type,$str."&key=".$this->key));
     }
 
     //统一下单
-    public function unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type,$openid=null,$scene_info=null){
+    public function unifiedOrder($body,$tradeNo,$totalFee,$notifyUrl,$tradeType,$openid=null,$sceneInfo=null)
+    {
         $url="https://api.mch.weixin.qq.com/pay/unifiedorder";
+
         $parameter=array();
         $parameter["appid"]=$this->appId;
         $parameter["mch_id"]=$this->mchId;
         $parameter["nonce_str"]=$this->randStr(32);
         $parameter["sign_type"]="MD5";
         $parameter["body"]=$body;
-        $parameter["out_trade_no"]=$out_trade_no;
-        $parameter["total_fee"]=$total_fee;
-        $parameter["notify_url"]=$notify_url;
-        $parameter["trade_type"]=$trade_type;
+        $parameter["out_trade_no"]=$tradeNo;
+        $parameter["total_fee"]=$totalFee;
+        $parameter["notify_url"]=$notifyUrl;
+        $parameter["trade_type"]=$tradeType;
 
         if($openid!==null){
             $parameter["openid"]=$openid;
         }
-        if($scene_info!==null){
-            $parameter["scene_info"]=$scene_info;
+
+        if($sceneInfo!==null){
+            $parameter["scene_info"]=$sceneInfo;
         }
+
         //签名
         $sign=$this->paySign($parameter);
         $parameter["sign"]=$sign;
 
         $xml=$this->arrToXml($parameter);
 
-        $result=$this->http_request($url,$xml,true);
+        $result=$this->request($url,$xml,true);
 
         if(!$result){
             return false;
         }
+
         $data=$this->xmlToArr($result);
 
         return $data;
     }
 
     //订单查询.
-    public function orderQuery($out_trade_no,$transaction_id=null){
+    public function orderQuery($tradeNo,$transactionId=null)
+    {
         $url="https://api.mch.weixin.qq.com/pay/orderquery";
+
         $arr=array();
         $arr["appid"]=$this->appId;
         $arr["mch_id"]=$this->mchId;
 
-        if($transaction_id!==null){  //有微信订单号优先使用
-            $arr["transaction_id"]=$transaction_id;
+        if($transactionId!==null){  //有微信订单号优先使用
+            $arr["transaction_id"]=$transactionId;
         }else{   //使用商户订单号
-            $arr["out_trade_no"]=$out_trade_no;
+            $arr["out_trade_no"]=$tradeNo;
         }
 
         $arr["nonce_str"]=$this->randStr(32);
@@ -91,11 +103,14 @@ class Pay extends WeChat{
         $arr["sign"]=$sign;
 
         $xml=$this->arrToXml($arr);
-        $result=$this->http_request($url,$xml,true);
+        $result=$this->request($url,$xml,true);
+
         if(!$result){
             return false;
         }
+
         $data=$this->xmlToArr($result);
+
         if($data["return_code"]=="FAIL" || $data["result_code"] == "FAIL"){
             return false;
         }
@@ -104,12 +119,14 @@ class Pay extends WeChat{
     }
 
     //关闭订单   新订单至少五分钟后才能关闭
-    public function closeOrder($out_trade_no){
+    public function closeOrder($tradeNo)
+    {
         $url="https://api.mch.weixin.qq.com/pay/closeorder";
+
         $arr=array();
         $arr["appid"]=$this->appId;
         $arr["mch_id"]=$this->mchId;
-        $arr["out_trade_no"]=$out_trade_no;
+        $arr["out_trade_no"]=$tradeNo;
         $arr["nonce_str"]=$this->randStr(32);
         $arr["sign_type"]="MD5";
 
@@ -117,12 +134,14 @@ class Pay extends WeChat{
         $arr["sign"]=$sign;
 
         $xml=$this->arrToXml($arr);
-        $result=$this->http_request($url,$xml,true);
+        $result=$this->request($url,$xml,true);
 
         if ($result==false){
             return false;
         }
+
         $data=$this->xmlToArr($result);
+
         if($data["return_code"]=="FAIL"){
             return false;
         }
@@ -131,34 +150,41 @@ class Pay extends WeChat{
     }
 
     //申请退款
-    public function refund($certPath,$keyPath,$out_trade_no,$out_refund_no,$total_fee,$refund_fee,$refund_desc=null){
+    public function refund($certPath,$keyPath,$tradeNo,$outRefundNo,$totalFee,$refundFee,$refundDesc=null)
+    {
         $url="https://api.mch.weixin.qq.com/secapi/pay/refund";
+
         if(!file_exists($certPath) || !file_exists($keyPath)){
             return false;
         }
+
         $arr=array();
         $arr["appid"]=$this->appId;
         $arr["mch_id"]=$this->mchId;
         $arr["nonce_str"]=$this->randStr(32);
         $arr["sign_type"]="MD5";
-        $arr["out_trade_no"]=$out_trade_no;
-        $arr["out_refund_no"]=$out_refund_no;
-        $arr["total_fee"]=$total_fee;
-        $arr["refund_fee"]=$refund_fee;
-        if($refund_desc){
-            $arr["refund_desc"]=$refund_desc;
+        $arr["out_trade_no"]=$tradeNo;
+        $arr["out_refund_no"]=$outRefundNo;
+        $arr["total_fee"]=$totalFee;
+        $arr["refund_fee"]=$refundFee;
+
+        if($refundDesc){
+            $arr["refund_desc"]=$refundDesc;
         }
 
         $sign=$this->paySign($arr);
         $arr["sign"]=$sign;
 
         $xml=$this->arrToXml($arr);
-        $result=$this->http_request($url,$xml,true,$certPath,$keyPath);
+
+        $result=$this->request($url,$xml,true,$certPath,$keyPath);
+
         if($result==false){
             return false;
         }
 
         $data=$this->xmlToArr($result);
+
         if($data["return_code"]=="FAIL"){
             return false;
         }
@@ -167,45 +193,59 @@ class Pay extends WeChat{
     }
 
     //查询退款
-    public function refundQuery($out_refund_no,$offset=null){
+    public function refundQuery($outRefundNo,$offset=null)
+    {
         $url="https://api.mch.weixin.qq.com/pay/refundquery";
+
         $arr=array();
         $arr["appid"]=$this->appId;
         $arr["mch_id"]=$this->mchId;
         $arr["nonce_str"]=$this->randStr(32);
         $arr["sign_type"]="MD5";
-        $arr["out_refund_no"]=$out_refund_no;
+        $arr["out_refund_no"]=$outRefundNo;
+
         if($offset){
             $arr["offset"]=$offset;
         }
 
         $sign=$this->paySign($arr);
+
         $arr["sign"]=$sign;
         $xml=$this->arrToXml($arr);
 
-        $result=$this->http_request($url,$xml,true);
+        $result=$this->request($url,$xml,true);
+
         if($result==false){
             return false;
         }
+
         $data=$this->xmlToArr($result);
+
         if($data["return_code"]=="FAIL"){
             return false;
         }
+
         return $data;
     }
 
     //获取支付结果通知 并 验证
-    public function getPayResult(){
+    public function getPayResult()
+    {
         $result=file_get_contents("php://input");
+
         $data=$this->xmlToArr($result);
+
         if($data["return_code"]=="FAIL"){
             return false;
         }
+
         $sign=$data["sign"];
-        $sign_type=$data["sign_type"];
+        $signType=$data["sign_type"];
+
         //验证签名
-        $sign_tmp=$this->paySign($data,$sign_type);
-        if($sign_tmp!=$sign){
+        $signTmp=$this->paySign($data,$signType);
+
+        if($signTmp!=$sign){
             return false;
         }
 
@@ -213,23 +253,28 @@ class Pay extends WeChat{
     }
 
     //生成微信公众号网页支付config
-    public function webPayConfig($body,$out_trade_no,$total_fee,$notify_url,$openid){
-        $trade_type="JSAPI";
+    public function webPayConfig($body,$tradeNo,$totalFee,$notifyUrl,$openid)
+    {
+        $tradeType="JSAPI";
+
         //请求统一下单接口生成预支付标识  7200s
-        $result=$this->unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type,$openid);
+        $result=$this->unifiedOrder($body,$tradeNo,$totalFee,$notifyUrl,$tradeType,$openid);
+
         if($result===false){
             return false;
         }
+
         if($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL"){
             return false;
         }
-        $prepay_id=$result["prepay_id"];
+
+        $prepayId=$result["prepay_id"];
 
         $arr=array();
         $arr["appId"]=$this->appId;
         $arr["timestamp"]=time();
         $arr["nonceStr"]=$this->randStr(32);
-        $arr["package"]="prepay_id=".$prepay_id;
+        $arr["package"]="prepay_id=".$prepayId;
         $arr["signType"]="MD5";
 
         //签名
@@ -240,22 +285,27 @@ class Pay extends WeChat{
     }
 
     //生成app支付config
-    public function appPayConfig($body,$out_trade_no,$total_fee,$notify_url){
-        $trade_type="APP";
+    public function appPayConfig($body,$tradeNo,$totalFee,$notifyUrl)
+    {
+        $tradeType="APP";
+
         //请求统一下单接口生成预支付标识  7200s
-        $result=$this->unifiedOrder($body,$out_trade_no,$total_fee,$notify_url,$trade_type);
+        $result=$this->unifiedOrder($body,$tradeNo,$totalFee,$notifyUrl,$tradeType);
+
         if($result===false){
             return false;
         }
+
         if($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL"){
             return false;
         }
-        $prepay_id=$result["prepay_id"];
+
+        $prepayId=$result["prepay_id"];
 
         $arr=array();
         $arr["appid"]=$this->appId;
         $arr["partnerid"]=$this->mchId;
-        $arr["prepayid"]=$prepay_id;
+        $arr["prepayid"]=$prepayId;
         $arr["package"]="Sign=WXPay";
         $arr["noncestr"]=$this->randStr(32);
         $arr["timestamp"]=time();
