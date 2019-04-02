@@ -1,10 +1,10 @@
 {
-    "name": "Painny/wechat",
+    "name": "Pengyu/wechat",
     "description": "wechat api",
     "type": "library",
     "authors": [
         {
-            "name": "pengyu",
+            "name": "Pengyu",
             "email": "917103429@qq.com"
         }
     ],
