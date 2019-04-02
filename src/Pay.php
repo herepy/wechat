@@ -8,7 +8,7 @@
 
 namespace Pywechat;
 
-class WechatPay extends WeChat{
+class Pay extends WeChat{
     //商户号
     protected $mchId;
     //商户密钥

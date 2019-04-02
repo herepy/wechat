@@ -8,7 +8,7 @@
 
 namespace Pywechat;
 
-class WebAuth extends WeChat {
+class Auth extends WeChat {
 
     //生成code获取的url
     public function codeUrl($redirect_uri,$scope="snsapi_base",$state="STATE"){
