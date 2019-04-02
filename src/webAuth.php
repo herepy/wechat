@@ -6,8 +6,7 @@
  * Time: 23:10
  */
 
-require_once "./wechat.php";
-require_once "./wechatPay.php";
+namespace Pywechat;
 
 class WebAuth extends WeChat {
 

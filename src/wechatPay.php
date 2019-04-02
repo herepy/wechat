@@ -6,7 +6,7 @@
  * Time: 11:20
  */
 
-require_once "./wechat.php";
+namespace Pywechat;
 
 class WechatPay extends WeChat{
     //商户号
