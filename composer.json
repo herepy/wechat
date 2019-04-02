@@ -1,0 +1,19 @@
+{
+    "name": "pengyu/wechat",
+    "description": "wechat api",
+    "type": "library",
+    "authors": [
+        {
+            "name": "pengyu",
+            "email": "917103429@qq.com"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "Pywechat\\": "src/"
+        }
+    }
+}
