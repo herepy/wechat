@@ -41,7 +41,7 @@ class Auth extends WeChat {
         );
 
         $url.=http_build_query($data);
-        $info=$this->http_request($url);
+        $info=$this->request($url);
 
         $ok=array_key_exists("errcode",json_decode($info,true));
 
@@ -60,7 +60,7 @@ class Auth extends WeChat {
         );
 
         $url.=http_build_query($data);
-        $res=$this->http_request($url);
+        $res=$this->request($url);
 
         $ok=array_key_exists("errcode",json_decode($res,true));
 
@@ -79,7 +79,7 @@ class Auth extends WeChat {
         );
 
         $url.=http_build_query($data);
-        $res=$this->http_request($url);
+        $res=$this->request($url);
 
         $ok=array_key_exists("errcode",json_decode($res,true));
 
@@ -91,7 +91,7 @@ class Auth extends WeChat {
     {
         $url="https://api.weixin.qq.com/sns/auth?access_token=".$accessToken."&openid=".$openid;
 
-        $res=$this->http_request($url);
+        $res=$this->request($url);
 
         return json_decode($res)->errcode==0?true:false;
     }
