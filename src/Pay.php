@@ -33,7 +33,7 @@ class Pay extends WeChat
         $str=$this->arrToUrl($parameter);
 
         $type="md5";
-        if($signType!="MD5"){
+        if ($signType!="MD5") {
             $type="sha256";
         }
 
@@ -56,11 +56,11 @@ class Pay extends WeChat
         $parameter["notify_url"]=$notifyUrl;
         $parameter["trade_type"]=$tradeType;
 
-        if($openid!==null){
+        if ($openid!==null) {
             $parameter["openid"]=$openid;
         }
 
-        if($sceneInfo!==null){
+        if ($sceneInfo!==null) {
             $parameter["scene_info"]=$sceneInfo;
         }
 
@@ -72,7 +72,7 @@ class Pay extends WeChat
 
         $result=$this->request($url,$xml,true);
 
-        if(!$result){
+        if (!$result) {
             return false;
         }
 
@@ -90,9 +90,9 @@ class Pay extends WeChat
         $arr["appid"]=$this->appId;
         $arr["mch_id"]=$this->mchId;
 
-        if($transactionId!==null){  //有微信订单号优先使用
+        if ($transactionId!==null) {  //有微信订单号优先使用
             $arr["transaction_id"]=$transactionId;
-        }else{   //使用商户订单号
+        } else {   //使用商户订单号
             $arr["out_trade_no"]=$tradeNo;
         }
 
@@ -105,13 +105,13 @@ class Pay extends WeChat
         $xml=$this->arrToXml($arr);
         $result=$this->request($url,$xml,true);
 
-        if(!$result){
+        if (!$result) {
             return false;
         }
 
         $data=$this->xmlToArr($result);
 
-        if($data["return_code"]=="FAIL" || $data["result_code"] == "FAIL"){
+        if ($data["return_code"]=="FAIL" || $data["result_code"] == "FAIL") {
             return false;
         }
 
@@ -136,13 +136,13 @@ class Pay extends WeChat
         $xml=$this->arrToXml($arr);
         $result=$this->request($url,$xml,true);
 
-        if ($result==false){
+        if ($result==false) {
             return false;
         }
 
         $data=$this->xmlToArr($result);
 
-        if($data["return_code"]=="FAIL"){
+        if ($data["return_code"]=="FAIL") {
             return false;
         }
 
@@ -154,7 +154,7 @@ class Pay extends WeChat
     {
         $url="https://api.mch.weixin.qq.com/secapi/pay/refund";
 
-        if(!file_exists($certPath) || !file_exists($keyPath)){
+        if (!file_exists($certPath) || !file_exists($keyPath)) {
             return false;
         }
 
@@ -168,7 +168,7 @@ class Pay extends WeChat
         $arr["total_fee"]=$totalFee;
         $arr["refund_fee"]=$refundFee;
 
-        if($refundDesc){
+        if ($refundDesc) {
             $arr["refund_desc"]=$refundDesc;
         }
 
@@ -179,13 +179,13 @@ class Pay extends WeChat
 
         $result=$this->request($url,$xml,true,$certPath,$keyPath);
 
-        if($result==false){
+        if ($result==false) {
             return false;
         }
 
         $data=$this->xmlToArr($result);
 
-        if($data["return_code"]=="FAIL"){
+        if ($data["return_code"]=="FAIL") {
             return false;
         }
 
@@ -204,7 +204,7 @@ class Pay extends WeChat
         $arr["sign_type"]="MD5";
         $arr["out_refund_no"]=$outRefundNo;
 
-        if($offset){
+        if ($offset) {
             $arr["offset"]=$offset;
         }
 
@@ -215,13 +215,13 @@ class Pay extends WeChat
 
         $result=$this->request($url,$xml,true);
 
-        if($result==false){
+        if ($result==false) {
             return false;
         }
 
         $data=$this->xmlToArr($result);
 
-        if($data["return_code"]=="FAIL"){
+        if ($data["return_code"]=="FAIL") {
             return false;
         }
 
@@ -235,7 +235,7 @@ class Pay extends WeChat
 
         $data=$this->xmlToArr($result);
 
-        if($data["return_code"]=="FAIL"){
+        if ($data["return_code"]=="FAIL") {
             return false;
         }
 
@@ -245,7 +245,7 @@ class Pay extends WeChat
         //验证签名
         $signTmp=$this->paySign($data,$signType);
 
-        if($signTmp!=$sign){
+        if ($signTmp!=$sign) {
             return false;
         }
 
@@ -260,11 +260,11 @@ class Pay extends WeChat
         //请求统一下单接口生成预支付标识  7200s
         $result=$this->unifiedOrder($body,$tradeNo,$totalFee,$notifyUrl,$tradeType,$openid);
 
-        if($result===false){
+        if ($result===false) {
             return false;
         }
 
-        if($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL"){
+        if ($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL") {
             return false;
         }
 
@@ -292,11 +292,11 @@ class Pay extends WeChat
         //请求统一下单接口生成预支付标识  7200s
         $result=$this->unifiedOrder($body,$tradeNo,$totalFee,$notifyUrl,$tradeType);
 
-        if($result===false){
+        if ($result===false) {
             return false;
         }
 
-        if($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL"){
+        if ($result["return_code"]=="FAIL" || $result["result_code"]=="FAIL") {
             return false;
         }
 

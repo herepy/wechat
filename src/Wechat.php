@@ -23,9 +23,9 @@ class WeChat{
     {
         $ip=false;
 
-        if($_SERVER['REMOTE_ADDR']){
+        if ($_SERVER['REMOTE_ADDR']) {
             $ip = $_SERVER['REMOTE_ADDR'];
-        }else if(getenv("REMOTE_ADDR")){
+        } else if (getenv("REMOTE_ADDR")) {
             $ip=getenv("REMOTE_ADDR");
         }
 
@@ -37,7 +37,7 @@ class WeChat{
     {
         $str="";
 
-        foreach ($arr as $key => $val){
+        foreach ($arr as $key => $val) {
             $str.="<{$key}>".$val."</{$key}>";
         }
 
@@ -47,7 +47,7 @@ class WeChat{
     //xml转数组
     protected function xmlToArr($xml)
     {
-        if(!$xml){
+        if (!$xml) {
             return false;
         }
 
@@ -63,8 +63,8 @@ class WeChat{
     {
         $str="";
 
-        foreach ($arr as $k => $v){
-            if($k=="sign"){
+        foreach ($arr as $k => $v) {
+            if ($k=="sign") {
                 continue;
             }
             $str.=$k."=".$v."&";
@@ -79,7 +79,7 @@ class WeChat{
         $lib="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         $str="";
-        while ($length>0){
+        while ($length>0) {
             $str.=$lib[mt_rand(0,strlen($lib)-1)];
             $length--;
         }
@@ -90,29 +90,29 @@ class WeChat{
     //curl 请求数据
      function request($url,$query=null,$isPost=false,$certPath=null,$keyPath=null)
      {
-         if($query!==null && $isPost==false){
-             if(is_array($query)){
+         if ($query!==null && $isPost==false) {
+             if (is_array($query)) {
                  $url.="?".http_build_query($query);
-             }else{
+             } else {
                  $url.="?".$query;
              }
          }
 
          $ch=curl_init($url);
 
-         if($isPost){
+         if ($isPost) {
              curl_setopt($ch,CURLOPT_POST,true);
              curl_setopt($ch,CURLOPT_POSTFIELDS,$query);
          }
 
-         if($certPath && $keyPath){   //需要验证证书
+         if ($certPath && $keyPath) {   //需要验证证书
              //默认格式为PEM
              curl_setopt($ch,CURLOPT_SSLCERTTYPE,'PEM');
              curl_setopt($ch,CURLOPT_SSLCERT,$certPath);
 
              curl_setopt($ch,CURLOPT_SSLKEYTYPE,'PEM');
              curl_setopt($ch,CURLOPT_SSLKEY,$keyPath);
-         }else{
+         } else {
              curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,true);
              curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,2);
          }
