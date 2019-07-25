@@ -272,7 +272,7 @@ class Pay extends WeChat
 
         $arr=array();
         $arr["appId"]=$this->appId;
-        $arr["timestamp"]=time();
+        $arr["timeStamp"]=time();
         $arr["nonceStr"]=$this->randStr(32);
         $arr["package"]="prepay_id=".$prepayId;
         $arr["signType"]="MD5";
