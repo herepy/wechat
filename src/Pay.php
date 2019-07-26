@@ -240,7 +240,7 @@ class Pay extends WeChat
         }
 
         $sign=$data["sign"];
-        $signType=$data["sign_type"];
+        $signType=isset($data["sign_type"])?$data["sign_type"]:"MD5";
 
         //验证签名
         $signTmp=$this->paySign($data,$signType);
