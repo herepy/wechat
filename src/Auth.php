@@ -6,9 +6,10 @@
  * Time: 23:10
  */
 
-namespace Pywechat;
+namespace Pengyu\Wechat;
 
-class Auth extends WeChat {
+class Auth extends Base
+{
 
     //生成code获取的url
     public function codeUrl($redirectUri,$scope="snsapi_base",$state="STATE")

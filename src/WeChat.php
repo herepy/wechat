@@ -6,9 +6,9 @@
  * Time: 23:51
  */
 
-namespace Pywechat;
+namespace Pengyu\Wechat;
 
-class WeChat{
+class Base{
     protected $appId;
     protected $appSecret;
 

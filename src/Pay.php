@@ -6,9 +6,9 @@
  * Time: 11:20
  */
 
-namespace Pywechat;
+namespace Pengyu\Wechat;
 
-class Pay extends WeChat
+class Pay extends Base
 {
     //商户号
     protected $mchId;
@@ -17,8 +17,7 @@ class Pay extends WeChat
 
     public function __construct($appId, $appSecret,$mchId,$key)
     {
-        $this->appId=$appId;
-        $this->appSecret=$appSecret;
+        parent::__construct($appId,$appSecret);
         $this->mchId=$mchId;
         $this->key=$key;
     }
