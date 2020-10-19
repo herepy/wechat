@@ -11,9 +11,7 @@ namespace Pengyu\Wechat;
 class Auth extends Base
 {
 
-
-    
-    //生成code获取的url.
+    //生成code获取的url
     public function codeUrl($redirectUri,$scope="snsapi_base",$state="STATE")
     {
         $url="https://open.weixin.qq.com/connect/oauth2/authorize?";
